@@ -10,6 +10,8 @@ type User struct {
 type UserRepository interface {
     // GetPassword returns the password for a given username, or error if not found
     GetPassword(username string) (string, error)
+    // CreateUser adds a new user. Returns error if username already exists.
+    CreateUser(username, password string) error
 }
 
 type InMemoryUserRepo struct {
@@ -29,4 +31,13 @@ func (r *InMemoryUserRepo) GetPassword(username string) (string, error) {
         return user.Password, nil
     }
     return "", fmt.Errorf("user %s not found", username)
+}
+
+// CreateUser adds a new user to the repo. Returns error if username exists.
+func (r *InMemoryUserRepo) CreateUser(username, password string) error {
+    if _, exists := r.users[username]; exists {
+        return fmt.Errorf("user %s already exists", username)
+    }
+    r.users[username] = User{Username: username, Password: password}
+    return nil
 }
