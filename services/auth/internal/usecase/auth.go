@@ -25,3 +25,11 @@ func (a *AuthServiceImpl) Login(ctx context.Context, username, password string) 
     }
     return fmt.Sprintf("token-%s", username), nil
 }
+
+// Register creates a new user with the given password.
+func (a *AuthServiceImpl) Register(ctx context.Context, username, password string) error {
+    if err := a.repo.CreateUser(username, password); err != nil {
+        return fmt.Errorf("registration failed: %w", err)
+    }
+    return nil
+}
